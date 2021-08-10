@@ -1,0 +1,100 @@
+//Obtain all orders for the customer named Cisnerous. (Assume you don't know his customer no. (cnum)).
+------------------------------------------------------------------------------------------------------------------------
+
+query-> SELECT * FROM SALESPEOPLE WHERE name LIKE "Cisnerous"
+
+//Produce the names and rating of all customers who have above average orders.
+------------------------------------------------------------------------------------------------------------------------
+
+query-> SELECT name,rating FROM ORDERS where ONUM > ( select avg(ONUM)  from ORDERS); 
+
+//Find total amount in orders for each salesperson for whom this total is greater than the amount of the largest order in the table.
+-------------------------------------------------------------------------------------------------------------------------
+
+query-> SELECT * FROM ORDERS WHERE sum(AMT) GROUP BY name HAVING sum(AMT) > max(AMT)
+
+//Find all customers with order on 3rd Oct.
+-----------------------------------------------------------------------------------------------------------------------------
+
+query-> SELECT * FROM ORDERS INNER JOIN TABLE_CUST ON ORDERS.CNUM = TABLE_CUST.CNUM WHERE strftime("%d", ODATE) = "3" and strftime("%m", ODATE) = "7"
+
+//Find names and numbers of all salesperson who have more than one customer.
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+query-> SELECT SNUM,SNAME FROM SALESPEOPLE INNER JOIN CUST ON SALESPEOPLE.SNUM = CUST.SNUM WHERE sum(CNUM) > 1 
+
+//Display the totals of orders for each day and place the results in descending order. 
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+query-> SELECT odate, COUNT(onum) FROM orders GROUP BY odate ORDER BY COUNT(onum); 
+
+//Count the customers with rating above San Jose’s average.
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+query-> SELECT cnum, rating FROM cust WHERE rating > ( SELECT avg(rating)  FROM cust WHERE city = 'San Jose'); 
+
+//Find salespeople no. who have multiple customers.
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+query-> SELECT CNAME FROM SALESPEOPLE INNER JOIN CUST ON SALESPEOPLE.SNUM = CUST.SNUM WHERE sum(CNUM) > 1  
+
+//Largest order taken by each salesperson with order value more than $3000.
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+query-> SELECT odate, snum, max(amt) FROM orders WHERE amt > 3000 GROUP BY odate, snum ORDER BY odate,snum; 
+
+//count all orders for Oct 3rd.
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+query-> SELECT count(*) FROM orders WHERE odate = ‘03-OCT-94’;
+
+//First customer in alphabetical order whose name begins with G.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+query-> Select min(cname) from cust where cname like ‘G%’; 
+
+//Find salespeople who serve only one customer.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+query-> SELECT CNAME FROM SALESPEOPLE INNER JOIN CUST ON SALESPEOPLE.SNUM = CUST.SNUM WHERE sum(CNUM) = 1 
+
+//Find all salespeople and customers located in london.
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+query-> SELECT CNUM,SNUM FROM CUST WHERE CITY = "London"
+
+//All customers with rating of 100.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+query-> SELECT cname FROM cust WHERE rating = 100;
+
+//Extract commissions of all salespeople servicing customers in London.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+query-> SELECT comm FROM salespeople WHERE snum in (SELECT snum FROM cust WHERE city = ‘London’); 
+
+//Produce all the salesperson in London who had at least one customer there.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+query-> SELECT * FROM SALESPEOPLE INNER JOIN CUST ON salespeople.snum = cust.snum WHERE city="London" and count(cnum) >=1 
+
+//Produce all the salesperson in London who did not have customers there.
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+query-> SELECT * FROM SALESPEOPLE INNER JOIN CUST ON salespeople.snum = cust.snum WHERE city="London" and count(cnum) = 0
+
+//All customers whose names begin with a letter from A to B.
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+query-> SELECT CNAME FROM CUST WHERE cname = "a%" and "%b"
+
+//All orders credited to the same salesperson who services Hoffman. 
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+query-> SELECT onum, sname, cname, amt FROM orders a, salespeople b, cust c WHERE a.snum = b.snum and a.cnum = c.cnum and 
+        a.snum = ( SELECT snum FROM orders WHERE cnum = ( SELECT cnum FROM cust WHERE cname = 'Hoffman')); 
+
+//Find average commission of salespeople in london.
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Select avg(comm) from salespeople where city = ‘London’; 
